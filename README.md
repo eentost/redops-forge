@@ -1,0 +1,72 @@
+# RedOps Forge v0.1.0
+
+Independent, scope-controlled AI Red Team platform MVP. The initial release provides an authorization registry, exact-origin scope enforcement, a deterministic plan preview, a safe HTTP metadata review, findings, a SHA-256 hash-chained evidence log with verification, an audit log and a lightweight dashboard.
+
+## Important implementation boundary
+
+This MVP is not an autonomous exploitation framework. It executes only a bounded HTTP review against explicitly registered target origins. It does not perform credential attacks, exploit delivery, persistence, lateral movement, data exfiltration, stealth, or EDR evasion. The skill catalog contains 23 domains, but only three web-review skills and evidence reporting are active in this MVP. Planned skills are not executable.
+
+## Run with Docker Compose
+
+```bash
+docker compose up --build -d
+docker compose ps
+docker compose logs -f redops-forge
+```
+
+Open http://127.0.0.1:8080. The service is bound to loopback only. Do not expose it to a public or corporate network without authentication, RBAC, TLS termination, network egress controls, and a security review.
+
+## Run locally
+
+```bash
+python -m venv .venv
+. .venv/bin/activate
+pip install -r requirements.txt
+REDOPS_DB_PATH=./data/redops.db uvicorn backend.app.main:app --host 127.0.0.1 --port 8080
+```
+
+## Tests
+
+```bash
+pytest -q
+```
+
+## Assessment workflow
+
+1. Register an exact HTTP(S) origin, approver, authorization reference, and expiry.
+2. Use `lab_mode` only for explicitly authorized private or loopback labs.
+3. Select one of the active, non-destructive skills.
+4. Execute the safe HTTP review. Requests are bounded to at most 10 per run and redirects are followed only within the same origin.
+5. Inspect findings and the evidence hash chain in the dashboard or `/api/v1/runs/{run_id}`.
+
+## API
+
+- `GET /api/v1/health`
+- `GET /api/v1/catalog`
+- `POST /api/v1/plans`
+- `GET /api/v1/scopes`
+- `POST /api/v1/scopes`
+- `GET /api/v1/runs`
+- `POST /api/v1/runs`
+- `GET /api/v1/runs/{run_id}`
+- `GET /api/v1/runs/{run_id}/verify`
+- `GET /api/v1/audit`
+- `GET /api/v1/reports/{run_id}`
+- `GET /api/v1/metrics`
+
+## Architecture notes
+
+- FastAPI API and static dashboard are shipped in one service for the MVP.
+- SQLite is used for a portable local deployment; PostgreSQL migration is a planned production hardening task.
+- Local LLM configuration is reserved in `.env.example`; the MVP planner is deterministic and does not call a model.
+- Evidence records are chained by SHA-256. This detects alteration of stored records when the chain is revalidated; it is not a substitute for external immutable/WORM storage or signed attestations.
+- Target DNS is checked before execution. Production deployment must additionally enforce outbound network allowlists at the host/firewall layer to mitigate DNS rebinding and routing changes.
+
+## Version status
+
+- Implemented: scope registration, authorization expiry checks, exact-origin enforcement, private-address lab gate, safe HTTP GET metadata probe, basic response-header/cookie checks, findings persistence, evidence chain, audit events, JSON report endpoint, dashboard.
+- Not implemented: active exploit execution, browser automation, AD/cloud/wireless execution adapters, autonomous multi-agent planning, independent exploit verifier, SIEM/EDR connector, RBAC, PostgreSQL, PDF reporting, immutable external evidence store.
+
+## Skill library
+
+The repository includes original, structured skill documents under `skills/`. Four entries are active in the catalog (web surface, HTTP headers, cookie attributes and evidence reporting); three passive assessment skills are executable and evidence reporting runs as a built-in workflow. The remaining initial domain reviews are marked planned. The 23-domain taxonomy is a product coverage map, not a claim that every attack technique is implemented.
