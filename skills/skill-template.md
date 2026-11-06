@@ -1,0 +1,12 @@
+# Skill Template
+- ID:
+- Domain:
+- Status: planned | active
+- Mode: passive | analysis | active
+- Authorization prerequisites:
+- Inputs:
+- Procedure:
+- Evidence:
+- Safety constraints:
+- Validation tests:
+- Known limitations:
