@@ -1,0 +1,78 @@
+{
+  "example_only": true,
+  "report_version": "0.1",
+  "generated_at": "2026-11-09T08:00:00+00:00",
+  "platform": "RedOps Forge",
+  "evidence_integrity": {
+    "valid": true,
+    "checked_records": 2,
+    "final_hash": "<SHA-256 calculated at runtime>"
+  },
+  "run": {
+    "id": "<generated-run-id>",
+    "scope_id": "<generated-scope-id>",
+    "target": "http://127.0.0.1:8001/",
+    "status": "completed",
+    "started_at": "<UTC timestamp>",
+    "completed_at": "<UTC timestamp>",
+    "summary": {
+      "request_count": 1,
+      "response_count": 1,
+      "finding_count": 3,
+      "duration_seconds": "<measured duration>",
+      "status": "completed",
+      "execution_profile": "safe-http-review"
+    }
+  },
+  "findings": [
+    {
+      "code": "Content Security Policy",
+      "severity": "medium",
+      "title": "Missing content-security-policy"
+    },
+    {
+      "code": "Referrer Policy",
+      "severity": "low",
+      "title": "Missing referrer-policy"
+    },
+    {
+      "code": "COOKIE_ATTRIBUTES",
+      "severity": "low",
+      "title": "Cookie attributes need review",
+      "evidence": {
+        "cookie_name": "lab_session",
+        "missing": [
+          "HttpOnly",
+          "SameSite"
+        ]
+      }
+    }
+  ],
+  "evidence": [
+    {
+      "kind": "http_response_metadata",
+      "payload": {
+        "origin": [
+          "http",
+          "127.0.0.1",
+          8001
+        ],
+        "path": "/",
+        "status_code": 200,
+        "http_version": "HTTP/1.1",
+        "headers": {
+          "content-type": "text/html",
+          "x-content-type-options": "nosniff"
+        },
+        "body_downloaded": false
+      }
+    },
+    {
+      "kind": "run_summary",
+      "payload": {
+        "request_count": 1,
+        "response_count": 1
+      }
+    }
+  ]
+}
