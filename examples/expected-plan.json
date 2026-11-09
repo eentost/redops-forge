@@ -1,0 +1,63 @@
+{
+  "example_only": true,
+  "planner": "deterministic-policy-planner",
+  "planner_mode": "rules-based-mvp",
+  "target_origin": "http://127.0.0.1:8001",
+  "selected_skills": [
+    {
+      "id": "web-surface-review",
+      "name": "Web Surface Review",
+      "risk": "low"
+    },
+    {
+      "id": "http-security-headers",
+      "name": "HTTP Security Headers",
+      "risk": "low"
+    },
+    {
+      "id": "cookie-attributes",
+      "name": "Cookie Attribute Review",
+      "risk": "low"
+    }
+  ],
+  "execution_profile": "safe-http-review",
+  "max_requests": 3,
+  "steps": [
+    {
+      "order": 1,
+      "skill_id": "web-surface-review",
+      "action": "Request the approved origin and capture response metadata",
+      "expected_evidence": [
+        "status_code",
+        "http_version",
+        "response_headers",
+        "content_length"
+      ]
+    },
+    {
+      "order": 2,
+      "skill_id": "http-security-headers",
+      "action": "Evaluate selected browser security response headers",
+      "expected_evidence": [
+        "missing_header_observations"
+      ]
+    },
+    {
+      "order": 3,
+      "skill_id": "cookie-attributes",
+      "action": "Inspect cookie flags without retaining cookie values",
+      "expected_evidence": [
+        "cookie_attribute_observations"
+      ]
+    }
+  ],
+  "blocked_capabilities": [
+    "credential_attacks",
+    "exploit_delivery",
+    "persistence",
+    "lateral_movement",
+    "data_exfiltration",
+    "stealth_or_evasion"
+  ],
+  "approval_required": true
+}
