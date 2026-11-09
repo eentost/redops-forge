@@ -17,5 +17,7 @@ jobs:
           cache: pip
       - run: pip install -r requirements.txt
       - run: python -m compileall -q backend tests
-      - run: pytest -q
+      - run: python -m pytest -q
       - run: python -m pip check
+      - run: docker compose config -q
+      - run: docker build -t redops-forge:ci .
